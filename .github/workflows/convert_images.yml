@@ -67,6 +67,16 @@ jobs:
           fi
         done
 
+    - name: Clean up input folder
+      run: |
+        input_dir='input'
+        for filename in $(ls $input_dir); do
+          if [ "$filename" == "NULL" ]; then
+            continue
+          fi
+          rm -f "${input_dir}/${filename}"
+        done
+
     - name: Commit and push changes
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
