@@ -57,7 +57,7 @@ jobs:
       run: |
         base_url='https://randomimg.pysio.online/output/'
         output_dir='output'
-        echo "" > url.csv
+        rm -f url.csv
         for filename in $(ls $output_dir); do
           if [ "$filename" == "NULL" ]; then
             continue
