@@ -55,14 +55,17 @@ jobs:
 
     - name: Generate url.csv
       run: |
-        output_dir = 'output'
-        base_url = 'https://randomimg.pysio.online/output/'
-        with open('url.csv', 'w') as f:
-            for filename in os.listdir(output_dir):
-                if filename == 'NULL':
-                    continue
-                if filename.lower().endswith('webp'):
-                    f.write(f'{base_url}{filename}\n')
+        base_url='https://randomimg.pysio.online/output/'
+        output_dir='output'
+        > url.csv
+        for filename in $(ls $output_dir); do
+          if [ "$filename" == "NULL" ]; then
+            continue
+          fi
+          if [[ $filename == *.webp ]]; then
+            echo "${base_url}${filename}" >> url.csv
+          fi
+        done
 
     - name: Commit and push changes
       env:
