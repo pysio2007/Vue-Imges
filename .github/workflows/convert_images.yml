@@ -43,7 +43,7 @@ jobs:
             if filename.lower().endswith(('png', 'jpg', 'jpeg', 'bmp', 'tiff', 'gif')):
                 img = Image.open(os.path.join(input_dir, filename))
                 webp_filename = os.path.splitext(filename)[0] + '.webp'
-                img.save(os.path.join(output_dir, webp_filename), 'webp'
+                img.save(os.path.join(output_dir, webp_filename), 'webp')
 
         for filename in os.listdir(input_dir):
             if filename == 'NULL':
