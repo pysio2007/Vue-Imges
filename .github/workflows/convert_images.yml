@@ -1,0 +1,75 @@
+name: Convert Images to WebP and Generate URLs
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  convert-and-generate-urls:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pillow
+
+    - name: Convert images to webp
+      run: |
+        mkdir -p output
+        python -c "
+        import os
+        from PIL import Image
+
+        input_dir = 'input'
+        output_dir = 'output'
+
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
+        for filename in os.listdir(input_dir):
+            if filename == 'NULL':
+                continue
+            if filename.lower().endswith(('png', 'jpg', 'jpeg', 'bmp', 'tiff', 'gif')):
+                img = Image.open(os.path.join(input_dir, filename))
+                webp_filename = os.path.splitext(filename)[0] + '.webp'
+                img.save(os.path.join(output_dir, webp_filename), 'webp'
+
+        for filename in os.listdir(input_dir):
+            if filename == 'NULL':
+                continue
+            file_path = os.path.join(input_dir, filename)
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        "
+
+    - name: Generate url.csv
+      run: |
+        output_dir = 'output'
+        base_url = 'https://randomimg.pysio.online/output/'
+        with open('url.csv', 'w') as f:
+            for filename in os.listdir(output_dir):
+                if filename == 'NULL':
+                    continue
+                if filename.lower().endswith('webp'):
+                    f.write(f'{base_url}{filename}\n')
+
+    - name: Commit and push changes
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
+        git add output url.csv
+        git commit -m 'Convert images to webp and generate URLs'
+        git push
